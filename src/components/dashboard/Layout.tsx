@@ -89,7 +89,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
 function DashboardSidebar() {
   const { user } = useAuth();
-  const { collapsed } = useSidebar();
+  const { state } = useSidebar();
+  
+  // Check if the sidebar is collapsed based on state value
+  const isCollapsed = state === "collapsed";
   
   const customerMenuItems = [
     { name: "Dashboard", icon: User, path: "/dashboard" },
@@ -109,9 +112,9 @@ function DashboardSidebar() {
     <Sidebar 
       className={cn(
         "border-r bg-sidebar transition-all duration-300 hidden md:flex",
-        collapsed ? "w-14" : "w-64"
+        isCollapsed ? "w-14" : "w-64"
       )}
-      collapsible
+      collapsible="icon"
     >
       <SidebarContent>
         <SidebarTrigger className="absolute right-2 top-2" />
@@ -119,7 +122,7 @@ function DashboardSidebar() {
         <div className="p-4">
           <h2 className={cn(
             "font-semibold transition-all duration-300", 
-            collapsed ? "opacity-0 h-0" : "opacity-100"
+            isCollapsed ? "opacity-0 h-0" : "opacity-100"
           )}>
             {user?.role === "customer" ? "Customer" : "Freelancer"} Portal
           </h2>
@@ -128,7 +131,7 @@ function DashboardSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel className={cn(
             "transition-opacity", 
-            collapsed ? "opacity-0" : "opacity-100"
+            isCollapsed ? "opacity-0" : "opacity-100"
           )}>
             Menu
           </SidebarGroupLabel>
@@ -145,7 +148,7 @@ function DashboardSidebar() {
                       <item.icon className="h-5 w-5 mr-2" />
                       <span className={cn(
                         "transition-all duration-300", 
-                        collapsed ? "opacity-0 w-0" : "opacity-100"
+                        isCollapsed ? "opacity-0 w-0" : "opacity-100"
                       )}>
                         {item.name}
                       </span>
