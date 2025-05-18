@@ -26,12 +26,12 @@ const FreelancerProfile = () => {
     setTimeout(() => {
       const mockFreelancer: User = {
         id: id || "2",
-        email: "jane@example.com",
-        name: "Jane Smith",
+        email: "mike@electricpro.com",
+        name: "Mike Johnson",
         role: "freelancer",
-        bio: "Experienced web developer and designer with 5+ years of experience. I specialize in creating responsive, user-friendly websites and applications using modern technologies.",
-        skills: ["React", "TypeScript", "UI/UX Design", "Node.js", "Tailwind CSS"],
-        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=250&h=250&auto=format&fit=crop"
+        bio: "Licensed electrician with over 15 years of experience in residential and commercial electrical services. Available 24/7 for emergency calls. I specialize in electrical repairs, installations, and troubleshooting to ensure your home's electrical systems are safe and functioning properly.",
+        skills: ["Electrical Repairs", "Panel Upgrades", "Lighting Installation", "Home Inspections", "Code Compliance", "Emergency Services"],
+        avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=250&h=250&auto=format&fit=crop"
       };
       
       setFreelancer(mockFreelancer);
@@ -81,7 +81,7 @@ const FreelancerProfile = () => {
           
           <div className="bg-white rounded-xl shadow-md overflow-hidden">
             {/* Profile Header */}
-            <div className="relative h-48 bg-gradient-to-r from-purple-500 to-blue-500">
+            <div className="relative h-48 bg-gradient-to-r from-blue-500 to-purple-600">
               {user && user.id === freelancer.id && (
                 <Link to="/profile" className="absolute top-4 right-4">
                   <Button variant="secondary" size="sm" className="flex items-center gap-1">
@@ -131,9 +131,9 @@ const FreelancerProfile = () => {
                     </div>
                     
                     <div className="mt-4 md:mt-0">
-                      <Button className="flex items-center gap-1">
-                        <MessageSquare className="h-4 w-4" />
-                        <span>Contact</span>
+                      <Button className="flex items-center gap-1 bg-purple-600 hover:bg-purple-700">
+                        <Briefcase className="h-4 w-4" />
+                        <span>Hire Now</span>
                       </Button>
                     </div>
                   </div>

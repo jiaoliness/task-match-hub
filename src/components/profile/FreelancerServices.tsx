@@ -43,7 +43,7 @@ export function FreelancerServices({ services }: FreelancerServicesProps) {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {services.map((service) => (
         <Card key={service.id} className="h-full overflow-hidden transition-all hover:shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-indigo-50">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-purple-50">
             <CardTitle className="text-xl text-primary">{service.title}</CardTitle>
             <CardDescription>
               <Badge variant="outline" className="mt-1">
@@ -55,7 +55,7 @@ export function FreelancerServices({ services }: FreelancerServicesProps) {
             <p className="text-sm text-gray-600">{service.description}</p>
           </CardContent>
           <CardFooter className="bg-gray-50 border-t p-4">
-            <Button className="w-full">Request This Service</Button>
+            <Button className="w-full bg-purple-600 hover:bg-purple-700">Book This Service</Button>
           </CardFooter>
         </Card>
       ))}
