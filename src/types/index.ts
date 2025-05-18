@@ -33,3 +33,24 @@ export interface JobApplication {
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
 }
+
+export interface Service {
+  id: string;
+  freelancerId: string;
+  title: string;
+  description: string;
+  rate: number;
+  rateUnit: "hour" | "project" | "word" | "day";
+}
+
+export interface Review {
+  id: string;
+  freelancerId: string;
+  customerId: string;
+  customerName: string;
+  jobId: string;
+  jobTitle: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}

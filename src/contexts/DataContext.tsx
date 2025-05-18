@@ -1,10 +1,11 @@
-
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Job, JobApplication } from "@/types";
+import { Job, JobApplication, Service, Review } from "@/types";
 
 interface DataContextType {
   jobs: Job[];
   applications: JobApplication[];
+  services: Service[];
+  reviews: Review[];
   addJob: (job: Omit<Job, "id" | "createdAt" | "status">) => Promise<Job>;
   getJobsForCustomer: (customerId: string) => Job[];
   getAvailableJobsForFreelancer: () => Job[];
@@ -12,6 +13,8 @@ interface DataContextType {
   getApplicationsForFreelancer: (freelancerId: string) => JobApplication[];
   getApplicationsForJob: (jobId: string) => JobApplication[];
   updateApplicationStatus: (applicationId: string, status: "accepted" | "rejected") => Promise<void>;
+  getServicesForFreelancer: (freelancerId: string) => Service[];
+  getReviewsForFreelancer: (freelancerId: string) => Review[];
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -56,9 +59,82 @@ const MOCK_APPLICATIONS: JobApplication[] = [
   }
 ];
 
+const MOCK_SERVICES: Service[] = [
+  {
+    id: "1",
+    freelancerId: "2",
+    title: "Web Development",
+    description: "Custom website development using React, Next.js, and other modern technologies.",
+    rate: 50,
+    rateUnit: "hour",
+  },
+  {
+    id: "2",
+    freelancerId: "2",
+    title: "UI/UX Design",
+    description: "User interface and experience design for web and mobile applications.",
+    rate: 45,
+    rateUnit: "hour",
+  },
+  {
+    id: "3",
+    freelancerId: "2",
+    title: "Logo Design",
+    description: "Professional logo design with unlimited revisions.",
+    rate: 300,
+    rateUnit: "project",
+  },
+  {
+    id: "4",
+    freelancerId: "3",
+    title: "Content Writing",
+    description: "SEO-optimized blog posts and articles for your website or publication.",
+    rate: 0.15,
+    rateUnit: "word",
+  }
+];
+
+const MOCK_REVIEWS: Review[] = [
+  {
+    id: "1",
+    freelancerId: "2",
+    customerId: "1",
+    customerName: "John Doe",
+    jobId: "1",
+    jobTitle: "Build a responsive website",
+    rating: 5,
+    comment: "Excellent work! The website looks amazing and was delivered on time.",
+    createdAt: "2024-04-15T10:00:00Z"
+  },
+  {
+    id: "2",
+    freelancerId: "2",
+    customerId: "4",
+    customerName: "Alice Johnson",
+    jobId: "3",
+    jobTitle: "E-commerce site redesign",
+    rating: 4,
+    comment: "Great work overall. Could have improved communication a bit, but the final result was great.",
+    createdAt: "2024-03-22T14:30:00Z"
+  },
+  {
+    id: "3",
+    freelancerId: "2",
+    customerId: "5",
+    customerName: "Robert Chen",
+    jobId: "4",
+    jobTitle: "Landing page design",
+    rating: 5,
+    comment: "Absolutely blown away by the quality of work. Will definitely hire again!",
+    createdAt: "2024-05-01T09:15:00Z"
+  }
+];
+
 export function DataProvider({ children }: { children: ReactNode }) {
   const [jobs, setJobs] = useState<Job[]>(MOCK_JOBS);
   const [applications, setApplications] = useState<JobApplication[]>(MOCK_APPLICATIONS);
+  const [services, setServices] = useState<Service[]>(MOCK_SERVICES);
+  const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
 
   const addJob = async (jobData: Omit<Job, "id" | "createdAt" | "status">) => {
     // Simulate API call
@@ -129,17 +205,29 @@ export function DataProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getServicesForFreelancer = (freelancerId: string) => {
+    return services.filter(service => service.freelancerId === freelancerId);
+  };
+
+  const getReviewsForFreelancer = (freelancerId: string) => {
+    return reviews.filter(review => review.freelancerId === freelancerId);
+  };
+
   return (
     <DataContext.Provider value={{ 
       jobs, 
       applications, 
+      services,
+      reviews,
       addJob, 
       getJobsForCustomer, 
       getAvailableJobsForFreelancer,
       applyToJob,
       getApplicationsForFreelancer,
       getApplicationsForJob,
-      updateApplicationStatus
+      updateApplicationStatus,
+      getServicesForFreelancer,
+      getReviewsForFreelancer
     }}>
       {children}
     </DataContext.Provider>

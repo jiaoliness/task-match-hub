@@ -1,4 +1,3 @@
-
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,9 +19,14 @@ export function FreelancerDashboard() {
   
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Welcome back, {user.name}!</h1>
-        <p className="text-muted-foreground">Here's what's happening with your freelance work.</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Welcome back, {user.name}!</h1>
+          <p className="text-muted-foreground">Here's what's happening with your freelance work.</p>
+        </div>
+        <Link to={`/freelancer/${user.id}`}>
+          <Button variant="outline">View Public Profile</Button>
+        </Link>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
