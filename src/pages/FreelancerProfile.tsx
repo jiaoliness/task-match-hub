@@ -25,7 +25,7 @@ const FreelancerProfile = () => {
     // For now, we'll use a mock freelancer
     setTimeout(() => {
       const mockFreelancer: User = {
-        id: id || "2",
+        id: id || "2", // Ensure this ID matches the ID of the services and reviews in DataContext
         email: "mike@electricpro.com",
         name: "Mike Johnson",
         role: "freelancer",
@@ -64,8 +64,13 @@ const FreelancerProfile = () => {
     );
   }
 
+  // Make sure the ID is being properly passed to these functions
+  // By logging the ID and the returned data, we can verify if there's a mismatch
+  console.log("Freelancer ID:", freelancer.id);
   const services = getServicesForFreelancer(freelancer.id);
+  console.log("Services:", services);
   const reviews = getReviewsForFreelancer(freelancer.id);
+  console.log("Reviews:", reviews);
   
   const averageRating = reviews.length > 0
     ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
