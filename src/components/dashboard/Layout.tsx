@@ -5,7 +5,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Briefcase, Mail, User } from "lucide-react";
+import { Briefcase, Mail, User, Calendar } from "lucide-react";
 import { 
   Sidebar, 
   SidebarContent, 
@@ -104,6 +104,7 @@ function DashboardSidebar() {
     { name: "Dashboard", icon: User, path: "/dashboard" },
     { name: "Find Jobs", icon: Briefcase, path: "/find-jobs" },
     { name: "My Applications", icon: Mail, path: "/applications" },
+    { name: "My Calendar", icon: Calendar, path: "/calendar" },
   ];
   
   const menuItems = user?.role === "customer" ? customerMenuItems : freelancerMenuItems;

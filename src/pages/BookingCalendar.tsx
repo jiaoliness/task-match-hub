@@ -49,8 +49,8 @@ const BookingCalendar = () => {
           <p className="text-muted-foreground">Manage your work schedule and appointments.</p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-1">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="lg:col-span-4">
             <Card>
               <CardHeader>
                 <CardTitle>Calendar</CardTitle>
@@ -61,7 +61,7 @@ const BookingCalendar = () => {
                   mode="single"
                   selected={selectedDate}
                   onSelect={setSelectedDate}
-                  className="p-3 pointer-events-auto"
+                  className="p-3 pointer-events-auto w-full max-w-none"
                   modifiers={{
                     booked: bookedDates
                   }}
@@ -92,7 +92,7 @@ const BookingCalendar = () => {
             </Card>
           </div>
           
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-8">
             <Card className="h-full">
               <CardHeader>
                 <CardTitle>
@@ -125,6 +125,11 @@ const BookingCalendar = () => {
                               <div>
                                 <h3 className="text-lg font-medium">{job?.title || "Job"}</h3>
                                 <p className="text-sm text-muted-foreground">{booking.timeSlot}</p>
+                                {job?.address && (
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    <span className="font-medium">Location:</span> {job.address.city}, {job.address.state}
+                                  </p>
+                                )}
                               </div>
                               <Badge>{booking.status}</Badge>
                             </div>
@@ -175,9 +180,14 @@ const BookingCalendar = () => {
                       <CardContent className="p-4 pt-6">
                         <div>
                           <h3 className="font-medium">{job?.title || "Job"}</h3>
-                          <p className="text-sm text-muted-foreground mb-3">
+                          <p className="text-sm text-muted-foreground mb-2">
                             {format(new Date(booking.date), 'PPP')} • {booking.timeSlot}
                           </p>
+                          {job?.address && (
+                            <p className="text-xs text-muted-foreground mb-3">
+                              {job.address.city}, {job.address.state}
+                            </p>
+                          )}
                         </div>
                         <div className="flex justify-between items-center">
                           <Badge>{booking.status}</Badge>

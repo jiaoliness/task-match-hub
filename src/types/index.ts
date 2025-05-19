@@ -1,3 +1,4 @@
+
 export type UserRole = "customer" | "freelancer";
 
 export interface User {
@@ -81,6 +82,7 @@ export interface Booking {
   date: string;
   timeSlot: string;
   status: "scheduled" | "completed" | "cancelled";
+  createdAt?: string;
 }
 
 export type TimeSlot = 
