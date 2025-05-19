@@ -6,7 +6,7 @@ import { JobList } from "@/components/jobs/JobList";
 import { Navigate } from "react-router-dom";
 
 const FindJobs = () => {
-  const { getAvailableJobsForFreelancer } = useData();
+  const { getAvailableJobsForFreelancer, getApplicationsForFreelancer } = useData();
   const { user, loading } = useAuth();
   
   if (loading) {
@@ -22,6 +22,11 @@ const FindJobs = () => {
   }
   
   const availableJobs = getAvailableJobsForFreelancer();
+  const freelancerApplications = getApplicationsForFreelancer(user.id);
+  
+  // Filter out jobs that the freelancer has already applied for
+  const appliedJobIds = freelancerApplications.map(app => app.jobId);
+  const unappliedJobs = availableJobs.filter(job => !appliedJobIds.includes(job.id));
   
   return (
     <DashboardLayout>
@@ -30,7 +35,7 @@ const FindJobs = () => {
           <h1 className="text-2xl font-bold">Find Jobs</h1>
           <p className="text-muted-foreground">Browse available jobs that match your skills.</p>
         </div>
-        <JobList jobs={availableJobs} showApplyButton={true} />
+        <JobList jobs={unappliedJobs} showApplyButton={true} />
       </div>
     </DashboardLayout>
   );

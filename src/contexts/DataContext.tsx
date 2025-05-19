@@ -23,7 +23,7 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-// Updated mock data for electrician
+// Updated mock data with more jobs and address information
 const MOCK_JOBS: Job[] = [
   {
     id: "1",
@@ -37,7 +37,14 @@ const MOCK_JOBS: Job[] = [
     customerName: "John Doe",
     status: "open",
     skills: ["Electrical Repair", "Troubleshooting"],
-    createdAt: "2024-05-01T10:00:00Z"
+    createdAt: "2024-05-01T10:00:00Z",
+    address: {
+      street: "123 Main St",
+      city: "Austin",
+      state: "Texas",
+      zipCode: "78701",
+      country: "USA"
+    }
   },
   {
     id: "2",
@@ -51,8 +58,175 @@ const MOCK_JOBS: Job[] = [
     customerName: "John Doe",
     status: "open",
     skills: ["Fan Installation", "Electrical Wiring"],
-    createdAt: "2024-05-05T14:30:00Z"
+    createdAt: "2024-05-05T14:30:00Z",
+    address: {
+      street: "123 Main St",
+      city: "Austin",
+      state: "Texas",
+      zipCode: "78701",
+      country: "USA"
+    }
   },
+  {
+    id: "3",
+    title: "Website redesign for local restaurant",
+    description: "Our restaurant needs a modern, mobile-friendly website. Looking for someone to redesign our existing site with online ordering capabilities.",
+    budget: 1200,
+    schedulingType: "flexible",
+    weeklyPreference: ["Monday", "Wednesday", "Friday"],
+    timeFramePreference: "Anytime",
+    customerId: "3",
+    customerName: "Sarah Williams",
+    status: "open",
+    skills: ["Web Design", "UI/UX", "React", "WordPress"],
+    createdAt: "2024-05-10T09:15:00Z",
+    address: {
+      city: "Chicago",
+      state: "Illinois",
+      country: "USA"
+    }
+  },
+  {
+    id: "4",
+    title: "Plumbing repair in bathroom",
+    description: "Leaking faucet and slow draining sink in master bathroom. Need a qualified plumber to fix both issues.",
+    budget: 175,
+    schedulingType: "specific",
+    specificDate: "2024-06-10",
+    specificTimeSlot: "2:00 PM - 4:00 PM",
+    customerId: "4",
+    customerName: "Alice Johnson",
+    status: "open",
+    skills: ["Plumbing", "Sink Repair", "Faucet Installation"],
+    createdAt: "2024-05-12T13:20:00Z",
+    address: {
+      street: "456 Oak Avenue",
+      city: "Denver",
+      state: "Colorado",
+      zipCode: "80202",
+      country: "USA"
+    }
+  },
+  {
+    id: "5",
+    title: "Logo design for tech startup",
+    description: "New AI startup looking for a modern, clean logo design that represents innovation and cutting-edge technology.",
+    budget: 350,
+    schedulingType: "flexible",
+    weeklyPreference: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    timeFramePreference: "Within 2 weeks",
+    customerId: "5",
+    customerName: "Robert Chen",
+    status: "open",
+    skills: ["Graphic Design", "Logo Design", "Branding"],
+    createdAt: "2024-05-15T10:45:00Z",
+    address: {
+      city: "San Francisco",
+      state: "California",
+      country: "USA"
+    }
+  },
+  {
+    id: "6",
+    title: "House painting - Living room and kitchen",
+    description: "Need interior painting for living room (walls and ceiling) and kitchen. Approximately 500 sq ft total. Paint will be provided.",
+    budget: 600,
+    schedulingType: "specific",
+    specificDate: "2024-06-22",
+    specificTimeSlot: "8:00 AM - 10:00 AM",
+    customerId: "6",
+    customerName: "Sarah Miller",
+    status: "open",
+    skills: ["Painting", "Interior Design", "Home Improvement"],
+    createdAt: "2024-05-16T15:30:00Z",
+    address: {
+      street: "789 Maple Drive",
+      city: "Portland",
+      state: "Oregon",
+      zipCode: "97201",
+      country: "USA"
+    }
+  },
+  {
+    id: "7",
+    title: "Social media content creation",
+    description: "Looking for someone to create engaging social media content for our fitness brand. Need posts for Instagram, Facebook, and TikTok.",
+    budget: 400,
+    schedulingType: "flexible",
+    weeklyPreference: ["Monday", "Wednesday", "Friday"],
+    timeFramePreference: "Ongoing",
+    customerId: "7",
+    customerName: "David Wilson",
+    status: "open",
+    skills: ["Social Media Marketing", "Content Creation", "Photography", "Video Editing"],
+    createdAt: "2024-05-18T11:10:00Z",
+    address: {
+      city: "Miami",
+      state: "Florida",
+      country: "USA"
+    }
+  },
+  {
+    id: "8",
+    title: "HVAC maintenance and filter replacement",
+    description: "Need routine maintenance for central air system and replacement of all air filters in the house.",
+    budget: 200,
+    schedulingType: "specific",
+    specificDate: "2024-06-18",
+    specificTimeSlot: "12:00 PM - 2:00 PM",
+    customerId: "8",
+    customerName: "Emily Taylor",
+    status: "open",
+    skills: ["HVAC", "Air Conditioning", "Maintenance"],
+    createdAt: "2024-05-19T14:25:00Z",
+    address: {
+      street: "234 Pine Street",
+      city: "Phoenix",
+      state: "Arizona",
+      zipCode: "85001",
+      country: "USA"
+    }
+  },
+  {
+    id: "9",
+    title: "Mobile app development for fitness tracking",
+    description: "Looking for a developer to create a mobile app for tracking workouts, nutrition, and progress. Need both iOS and Android versions.",
+    budget: 5000,
+    schedulingType: "flexible",
+    weeklyPreference: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    timeFramePreference: "Within 3 months",
+    customerId: "9",
+    customerName: "Michael Brown",
+    status: "open",
+    skills: ["Mobile Development", "React Native", "UI/UX", "Fitness"],
+    createdAt: "2024-05-20T09:00:00Z",
+    address: {
+      city: "Seattle",
+      state: "Washington",
+      country: "USA"
+    }
+  },
+  {
+    id: "10",
+    title: "Garden landscaping and maintenance",
+    description: "Need help redesigning front yard garden with drought-resistant plants and setting up a drip irrigation system.",
+    budget: 800,
+    schedulingType: "specific",
+    specificDate: "2024-06-25",
+    specificTimeSlot: "8:00 AM - 10:00 AM",
+    customerId: "10",
+    customerName: "Jessica Adams",
+    status: "open",
+    skills: ["Landscaping", "Gardening", "Irrigation Systems"],
+    createdAt: "2024-05-22T16:45:00Z",
+    address: {
+      street: "567 Willow Lane",
+      city: "Las Vegas",
+      state: "Nevada",
+      zipCode: "89101",
+      country: "USA"
+    }
+  }
 ];
 
 const MOCK_APPLICATIONS: JobApplication[] = [

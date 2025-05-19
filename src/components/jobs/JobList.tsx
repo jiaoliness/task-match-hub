@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import { MapPin } from "lucide-react";
 
 interface JobListProps {
   jobs: Job[];
@@ -20,14 +21,16 @@ export function JobList({ jobs, showApplyButton = false }: JobListProps) {
   const filteredJobs = jobs.filter(job => 
     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
+    job.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    job.address?.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.address?.state?.toLowerCase().includes(searchTerm.toLowerCase())
   );
   
   return (
     <div className="space-y-6">
       <div className="flex gap-2">
         <Input
-          placeholder="Search jobs by title, description, or skills..."
+          placeholder="Search jobs by title, description, skills, or location..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-md"
@@ -67,6 +70,18 @@ function JobCard({ job, showApplyButton }: JobCardProps) {
     return "Flexible";
   };
 
+  // Format the location information
+  const getLocationInfo = () => {
+    if (job.address) {
+      const { city, state, country } = job.address;
+      const parts = [city, state, country].filter(Boolean);
+      if (parts.length > 0) {
+        return parts.join(', ');
+      }
+    }
+    return "Remote";
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <CardHeader>
@@ -86,6 +101,12 @@ function JobCard({ job, showApplyButton }: JobCardProps) {
       </CardHeader>
       <CardContent className="flex-1">
         <p className="line-clamp-3 text-sm mb-4">{job.description}</p>
+        {job.address && (
+          <div className="flex items-center text-sm text-muted-foreground mb-4">
+            <MapPin className="h-4 w-4 mr-1" />
+            <span>{getLocationInfo()}</span>
+          </div>
+        )}
         <div className="flex flex-wrap gap-2 mb-4">
           {job.skills.map((skill, index) => (
             <Badge key={index} variant="outline">{skill}</Badge>

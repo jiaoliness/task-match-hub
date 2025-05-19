@@ -1,4 +1,3 @@
-
 export type UserRole = "customer" | "freelancer";
 
 export interface User {
@@ -9,6 +8,13 @@ export interface User {
   bio?: string;
   skills?: string[];
   avatar?: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
 }
 
 export interface Job {
@@ -26,6 +32,13 @@ export interface Job {
   status: "open" | "assigned" | "completed";
   skills: string[];
   createdAt: string;
+  address?: {
+    street?: string;
+    city?: string;
+    state?: string;
+    zipCode?: string;
+    country?: string;
+  };
 }
 
 export interface JobApplication {
