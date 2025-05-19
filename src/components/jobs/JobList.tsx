@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import { format } from "date-fns";
 
 interface JobListProps {
   jobs: Job[];
@@ -56,6 +57,16 @@ interface JobCardProps {
 }
 
 function JobCard({ job, showApplyButton }: JobCardProps) {
+  // Format the date information based on scheduling type
+  const getDateInfo = () => {
+    if (job.schedulingType === "specific" && job.specificDate) {
+      return format(new Date(job.specificDate), "MMM d, yyyy");
+    } else if (job.schedulingType === "flexible" && job.weeklyPreference) {
+      return job.weeklyPreference.join(', ');
+    }
+    return "Flexible";
+  };
+
   return (
     <Card className="h-full flex flex-col">
       <CardHeader>
@@ -82,7 +93,7 @@ function JobCard({ job, showApplyButton }: JobCardProps) {
         </div>
         <div className="flex justify-between text-sm text-muted-foreground">
           <div>Budget: <span className="font-medium">${job.budget}</span></div>
-          <div>Due: <span className="font-medium">{new Date(job.deadline).toLocaleDateString()}</span></div>
+          <div>Schedule: <span className="font-medium">{getDateInfo()}</span></div>
         </div>
       </CardContent>
       <CardFooter>
