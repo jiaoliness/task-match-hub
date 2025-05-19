@@ -16,7 +16,11 @@ export interface Job {
   title: string;
   description: string;
   budget: number;
-  deadline: string;
+  schedulingType: "specific" | "flexible";
+  specificDate?: string;
+  specificTimeSlot?: string;
+  weeklyPreference?: string[];
+  timeFramePreference?: string;
   customerId: string;
   customerName: string;
   status: "open" | "assigned" | "completed";
@@ -30,6 +34,8 @@ export interface JobApplication {
   freelancerId: string;
   freelancerName: string;
   coverLetter: string;
+  proposedDate?: string;
+  proposedTimeSlot?: string; 
   status: "pending" | "accepted" | "rejected";
   createdAt: string;
 }
@@ -54,3 +60,22 @@ export interface Review {
   comment: string;
   createdAt: string;
 }
+
+export interface Booking {
+  id: string;
+  freelancerId: string;
+  jobId: string;
+  date: string;
+  timeSlot: string;
+  status: "scheduled" | "completed" | "cancelled";
+}
+
+export type TimeSlot = 
+  | "8:00 AM - 10:00 AM" 
+  | "10:00 AM - 12:00 PM"
+  | "12:00 PM - 2:00 PM"
+  | "2:00 PM - 4:00 PM"
+  | "4:00 PM - 6:00 PM"
+  | "6:00 PM - 8:00 PM";
+
+export type WeekDay = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";

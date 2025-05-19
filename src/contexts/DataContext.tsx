@@ -1,11 +1,12 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Job, JobApplication, Service, Review } from "@/types";
+import { Job, JobApplication, Service, Review, Booking, TimeSlot } from "@/types";
 
 interface DataContextType {
   jobs: Job[];
   applications: JobApplication[];
   services: Service[];
   reviews: Review[];
+  bookings: Booking[];
   addJob: (job: Omit<Job, "id" | "createdAt" | "status">) => Promise<Job>;
   getJobsForCustomer: (customerId: string) => Job[];
   getAvailableJobsForFreelancer: () => Job[];
@@ -15,6 +16,9 @@ interface DataContextType {
   updateApplicationStatus: (applicationId: string, status: "accepted" | "rejected") => Promise<void>;
   getServicesForFreelancer: (freelancerId: string) => Service[];
   getReviewsForFreelancer: (freelancerId: string) => Review[];
+  getBookingsForFreelancer: (freelancerId: string) => Booking[];
+  checkFreelancerAvailability: (freelancerId: string, date: string, timeSlot: string) => boolean;
+  addBooking: (booking: Omit<Booking, "id">) => Promise<Booking>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -23,26 +27,30 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 const MOCK_JOBS: Job[] = [
   {
     id: "1",
-    title: "Build a responsive website",
-    description: "I need a responsive website for my small business. Should include about, services, and contact pages.",
-    budget: 500,
-    deadline: "2024-07-01",
+    title: "Fix faulty outlets in kitchen",
+    description: "I have two outlets in my kitchen that have stopped working. Need someone to diagnose and fix the issue.",
+    budget: 150,
+    schedulingType: "specific",
+    specificDate: "2024-06-15",
+    specificTimeSlot: "10:00 AM - 12:00 PM",
     customerId: "1",
     customerName: "John Doe",
     status: "open",
-    skills: ["HTML", "CSS", "JavaScript"],
+    skills: ["Electrical Repair", "Troubleshooting"],
     createdAt: "2024-05-01T10:00:00Z"
   },
   {
     id: "2",
-    title: "Logo design for tech startup",
-    description: "I need a modern, minimalist logo for my tech startup in the AI space.",
-    budget: 300,
-    deadline: "2024-06-15",
+    title: "Install ceiling fan in bedroom",
+    description: "Need a ceiling fan installed in the master bedroom. I have the fan, just need someone to install it.",
+    budget: 120,
+    schedulingType: "flexible",
+    weeklyPreference: ["Saturday", "Sunday"],
+    timeFramePreference: "Morning or Afternoon",
     customerId: "1",
     customerName: "John Doe",
     status: "open",
-    skills: ["Graphic Design", "Branding"],
+    skills: ["Fan Installation", "Electrical Wiring"],
     createdAt: "2024-05-05T14:30:00Z"
   },
 ];
@@ -53,9 +61,30 @@ const MOCK_APPLICATIONS: JobApplication[] = [
     jobId: "1",
     freelancerId: "2",
     freelancerName: "Jane Smith",
-    coverLetter: "I'm an experienced web developer and I can build your website with the latest technologies.",
+    coverLetter: "I'm an experienced electrician and I can fix your faulty outlets quickly and efficiently.",
+    proposedDate: "2024-06-15",
+    proposedTimeSlot: "10:00 AM - 12:00 PM",
     status: "pending",
     createdAt: "2024-05-07T09:15:00Z"
+  }
+];
+
+const MOCK_BOOKINGS: Booking[] = [
+  {
+    id: "1",
+    freelancerId: "2",
+    jobId: "1",
+    date: "2024-06-10",
+    timeSlot: "2:00 PM - 4:00 PM",
+    status: "scheduled"
+  },
+  {
+    id: "2",
+    freelancerId: "2",
+    jobId: "2",
+    date: "2024-06-20",
+    timeSlot: "10:00 AM - 12:00 PM",
+    status: "scheduled"
   }
 ];
 
@@ -222,6 +251,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [applications, setApplications] = useState<JobApplication[]>(MOCK_APPLICATIONS);
   const [services, setServices] = useState<Service[]>(MOCK_SERVICES);
   const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
+  const [bookings, setBookings] = useState<Booking[]>(MOCK_BOOKINGS);
 
   const addJob = async (jobData: Omit<Job, "id" | "createdAt" | "status">) => {
     // Simulate API call
@@ -288,8 +318,46 @@ export function DataProvider({ children }: { children: ReactNode }) {
             job.id === application.jobId ? { ...job, status: "assigned" } : job
           )
         );
+        
+        // Create a booking if accepted
+        if (application.proposedDate && application.proposedTimeSlot) {
+          const newBooking: Booking = {
+            id: `${bookings.length + 1}`,
+            freelancerId: application.freelancerId,
+            jobId: application.jobId,
+            date: application.proposedDate,
+            timeSlot: application.proposedTimeSlot,
+            status: "scheduled"
+          };
+          
+          setBookings([...bookings, newBooking]);
+        }
       }
     }
+  };
+
+  const getBookingsForFreelancer = (freelancerId: string) => {
+    return bookings.filter(booking => booking.freelancerId === freelancerId);
+  };
+
+  const checkFreelancerAvailability = (freelancerId: string, date: string, timeSlot: string) => {
+    const freelancerBookings = getBookingsForFreelancer(freelancerId);
+    return !freelancerBookings.some(
+      booking => booking.date === date && booking.timeSlot === timeSlot && booking.status === "scheduled"
+    );
+  };
+
+  const addBooking = async (bookingData: Omit<Booking, "id">) => {
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    const newBooking: Booking = {
+      ...bookingData,
+      id: `${bookings.length + 1}`
+    };
+    
+    setBookings([...bookings, newBooking]);
+    return newBooking;
   };
 
   const getServicesForFreelancer = (freelancerId: string) => {
@@ -306,6 +374,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       applications, 
       services,
       reviews,
+      bookings,
       addJob, 
       getJobsForCustomer, 
       getAvailableJobsForFreelancer,
@@ -314,7 +383,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
       getApplicationsForJob,
       updateApplicationStatus,
       getServicesForFreelancer,
-      getReviewsForFreelancer
+      getReviewsForFreelancer,
+      getBookingsForFreelancer,
+      checkFreelancerAvailability,
+      addBooking
     }}>
       {children}
     </DataContext.Provider>
