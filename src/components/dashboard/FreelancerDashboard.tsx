@@ -1,9 +1,12 @@
+
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { JobApplication } from "@/types";
+import { ResumeUploader } from "./ResumeUploader";
+import { ExperienceTimeline } from "./ExperienceTimeline";
 
 export function FreelancerDashboard() {
   const { user } = useAuth();
@@ -53,42 +56,49 @@ export function FreelancerDashboard() {
         />
       </div>
       
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold">Recent Jobs</h2>
-          <Link to="/find-jobs">
-            <Button variant="outline">View All Jobs</Button>
-          </Link>
-        </div>
-        
-        {availableJobs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {availableJobs.map(job => (
-              <Card key={job.id}>
-                <CardHeader>
-                  <CardTitle>{job.title}</CardTitle>
-                  <CardDescription>Posted by {job.customerName}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="line-clamp-2 text-sm mb-3">{job.description}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground text-sm">${job.budget}</span>
-                    <Link to={`/job/${job.id}`}>
-                      <Button variant="outline" size="sm">View Details</Button>
-                    </Link>
-                  </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ResumeUploader />
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold">Recent Jobs</h2>
+              <Link to="/find-jobs">
+                <Button variant="outline">View All Jobs</Button>
+              </Link>
+            </div>
+            
+            {availableJobs.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4">
+                {availableJobs.map(job => (
+                  <Card key={job.id}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="text-lg">{job.title}</CardTitle>
+                      <CardDescription>Posted by {job.customerName}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="line-clamp-2 text-sm mb-3">{job.description}</p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-muted-foreground text-sm">${job.budget}</span>
+                        <Link to={`/job/${job.id}`}>
+                          <Button variant="outline" size="sm">View Details</Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="py-6 text-center">
+                  <p className="text-muted-foreground">No jobs available right now. Check back later!</p>
                 </CardContent>
               </Card>
-            ))}
+            )}
           </div>
-        ) : (
-          <Card>
-            <CardContent className="py-6 text-center">
-              <p className="text-muted-foreground">No jobs available right now. Check back later!</p>
-            </CardContent>
-          </Card>
-        )}
+        </div>
       </div>
+      
+      <ExperienceTimeline />
       
       <div className="space-y-4">
         <div className="flex justify-between items-center">
