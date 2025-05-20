@@ -21,6 +21,75 @@ interface JobMapProps {
   searchTerm: string;
 }
 
+// Create a custom chat bubble marker icon
+function createChatBubbleIcon(jobTitle: string) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return null;
+
+  // Set canvas size
+  const width = 120;
+  const height = 40;
+  const pointerHeight = 8; // Small pointer for subtle look
+  canvas.width = width;
+  canvas.height = height + pointerHeight;
+
+  // Clear canvas
+  ctx.clearRect(0, 0, width, height + pointerHeight);
+
+  // Draw chat bubble background (blue)
+  ctx.fillStyle = '#4338ca';
+  ctx.strokeStyle = '#e5e7eb';
+  ctx.lineWidth = 1;
+  
+  // Draw rounded rectangle for bubble
+  const radius = 8;
+  ctx.beginPath();
+  ctx.moveTo(radius, 0);
+  ctx.lineTo(width - radius, 0);
+  ctx.quadraticCurveTo(width, 0, width, radius);
+  ctx.lineTo(width, height - radius);
+  ctx.quadraticCurveTo(width, height, width - radius, height);
+  ctx.lineTo(radius, height);
+  ctx.quadraticCurveTo(0, height, 0, height - radius);
+  ctx.lineTo(0, radius);
+  ctx.quadraticCurveTo(0, 0, radius, 0);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Draw small triangle pointer at bottom center
+  const pointerWidth = 12;
+  ctx.beginPath();
+  ctx.moveTo(width / 2 - pointerWidth / 2, height);
+  ctx.lineTo(width / 2, height + pointerHeight);
+  ctx.lineTo(width / 2 + pointerWidth / 2, height);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Draw text (white, centered)
+  ctx.font = '600 12px system-ui';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'white';
+  
+  // Truncate and add ellipsis if needed
+  const maxLength = 15;
+  const displayText = jobTitle.length > maxLength 
+    ? jobTitle.substring(0, maxLength) + '...' 
+    : jobTitle;
+  
+  ctx.fillText(displayText, width / 2, height / 2);
+
+  return {
+    url: canvas.toDataURL(),
+    size: new google.maps.Size(width, height + pointerHeight), // Include pointer in size
+    anchor: new google.maps.Point(width / 2, height + pointerHeight), // Anchor at bottom center of pointer
+    scaledSize: new google.maps.Size(width, height + pointerHeight)
+  };
+}
+
 export function JobMap({ jobs, searchTerm }: JobMapProps) {
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -95,19 +164,23 @@ export function JobMap({ jobs, searchTerm }: JobMapProps) {
         position,
         map,
         title: job.title,
-        animation: google.maps.Animation.DROP
+        icon: createChatBubbleIcon(job.title),
+        optimized: false // Disable marker optimization for custom icons
       });
 
-      marker.addListener('click', () => {
+      marker.addListener('click', (e: google.maps.MapMouseEvent) => {
+        e.stop();
         setSelectedJob(job);
       });
 
       markersRef.current[job.id] = marker;
     });
 
-    // Fit map to markers if there are any
-    if (Object.keys(markersRef.current).length > 0) {
-      map.fitBounds(bounds);
+    // Only fit bounds when the jobs list or search term changes
+    if (Object.keys(markersRef.current).length > 0 && !map.getBounds()) {
+      setTimeout(() => {
+        map.fitBounds(bounds);
+      }, 100);
     }
   }, [map, filteredJobs, searchTerm]);
 
@@ -128,6 +201,11 @@ export function JobMap({ jobs, searchTerm }: JobMapProps) {
           streetViewControl: false,
           mapTypeControl: false,
           fullscreenControl: true,
+          gestureHandling: 'cooperative',
+          scrollwheel: true,
+          disableDoubleClickZoom: true,
+          maxZoom: 18,
+          minZoom: 10,
         }}
       >
         {selectedJob && (
@@ -137,6 +215,10 @@ export function JobMap({ jobs, searchTerm }: JobMapProps) {
               lng: getCoordinatesForAddress(selectedJob.address)![0]
             }}
             onCloseClick={() => setSelectedJob(null)}
+            options={{
+              disableAutoPan: true,
+              pixelOffset: new google.maps.Size(0, -40)
+            }}
           >
             <div className="p-2 max-w-xs">
               <h3 className="font-semibold text-primary cursor-pointer hover:underline" onClick={() => window.location.href = `/job/${selectedJob.id}`}>
@@ -201,8 +283,8 @@ function getCoordinatesForAddress(address: Job['address']) {
     if (address.street && address.street.includes(location)) {
       // Add slight randomness to prevent exact overlap
       return [
-        coords[0] + (Math.random() - 0.5) * 0.002,
-        coords[1] + (Math.random() - 0.5) * 0.002
+        coords[0],
+        coords[1]
       ];
     }
   }
@@ -210,7 +292,7 @@ function getCoordinatesForAddress(address: Job['address']) {
   // Default to a random location in Iloilo City if no match
   const defaultCoord = [122.5642, 10.7202]; // Center of Iloilo City
   return [
-    defaultCoord[0] + (Math.random() - 0.5) * 0.01,
-    defaultCoord[1] + (Math.random() - 0.5) * 0.01
+    defaultCoord[0],
+    defaultCoord[1]
   ];
 }
