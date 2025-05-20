@@ -1,4 +1,3 @@
-
 import { useData } from "@/contexts/DataContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -56,75 +55,77 @@ export function FreelancerDashboard() {
         />
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Make ResumeUploader full width */}
+      <div>
         <ResumeUploader />
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h2 className="text-xl font-bold">Recent Jobs</h2>
-              <Link to="/find-jobs">
-                <Button variant="outline">View All Jobs</Button>
-              </Link>
-            </div>
-            
-            {availableJobs.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4">
-                {availableJobs.map(job => (
-                  <Card key={job.id}>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-lg">{job.title}</CardTitle>
-                      <CardDescription>Posted by {job.customerName}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="line-clamp-2 text-sm mb-3">{job.description}</p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-muted-foreground text-sm">${job.budget}</span>
-                        <Link to={`/job/${job.id}`}>
-                          <Button variant="outline" size="sm">View Details</Button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            ) : (
-              <Card>
-                <CardContent className="py-6 text-center">
-                  <p className="text-muted-foreground">No jobs available right now. Check back later!</p>
-                </CardContent>
-              </Card>
-            )}
+      </div>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold">Recent Jobs</h2>
+            <Link to="/find-jobs">
+              <Button variant="outline">View All Jobs</Button>
+            </Link>
           </div>
+          
+          {availableJobs.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4">
+              {availableJobs.map(job => (
+                <Card key={job.id}>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-lg">{job.title}</CardTitle>
+                    <CardDescription>Posted by {job.customerName}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="line-clamp-2 text-sm mb-3">{job.description}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground text-sm">${job.budget}</span>
+                      <Link to={`/job/${job.id}`}>
+                        <Button variant="outline" size="sm">View Details</Button>
+                      </Link>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-6 text-center">
+                <p className="text-muted-foreground">No jobs available right now. Check back later!</p>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold">Recent Applications</h2>
+            <Link to="/applications">
+              <Button variant="outline">View All Applications</Button>
+            </Link>
+          </div>
+          
+          {applications.length > 0 ? (
+            <div className="grid grid-cols-1 gap-4">
+              {applications.slice(0, 3).map(application => (
+                <ApplicationCard key={application.id} application={application} />
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="py-6 text-center">
+                <p className="text-muted-foreground">You haven't submitted any applications yet.</p>
+                <Link to="/find-jobs">
+                  <Button className="mt-3">Find Jobs</Button>
+                </Link>
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
       
       <ExperienceTimeline />
-      
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold">Recent Applications</h2>
-          <Link to="/applications">
-            <Button variant="outline">View All Applications</Button>
-          </Link>
-        </div>
-        
-        {applications.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {applications.slice(0, 3).map(application => (
-              <ApplicationCard key={application.id} application={application} />
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="py-6 text-center">
-              <p className="text-muted-foreground">You haven't submitted any applications yet.</p>
-              <Link to="/find-jobs">
-                <Button className="mt-3">Find Jobs</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        )}
-      </div>
     </div>
   );
 }

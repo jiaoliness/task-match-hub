@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useData } from "@/contexts/DataContext";
 import { Button } from "@/components/ui/button";
-import { Upload, FileText, Check, Trash2, AlertTriangle } from "lucide-react";
+import { Upload, FileText, Check, Trash2, AlertTriangle, Eye, Download } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Resume } from "@/types";
@@ -19,6 +19,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogFooter,
+  DialogDescription
+} from "@/components/ui/dialog";
 
 export function ResumeUploader() {
   const { user } = useAuth();
@@ -27,6 +35,7 @@ export function ResumeUploader() {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [viewingResume, setViewingResume] = useState<Resume | null>(null);
   
   // Get user's existing resumes
   const userResumes = user ? getUserResumes(user.id) : [];
@@ -108,6 +117,28 @@ export function ResumeUploader() {
     } catch (error) {
       toast.error("Failed to delete resume");
     }
+  };
+
+  const handleViewResume = (resume: Resume) => {
+    setViewingResume(resume);
+  };
+
+  const handleDownloadResume = (resume: Resume) => {
+    // In a real application, this would fetch the actual file from storage
+    // For now, we'll create a mock file for download demonstration
+    const mockContent = `Mock resume content for ${resume.fileName}`;
+    const blob = new Blob([mockContent], { type: resume.fileType });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = resume.fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast.success(`Downloading ${resume.fileName}`);
   };
 
   const hasActiveResume = userResumes.some(resume => resume.isActive);
@@ -219,6 +250,24 @@ export function ResumeUploader() {
                         </Button>
                       )}
                       
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-blue-500 hover:text-blue-700 hover:bg-blue-100"
+                        onClick={() => handleViewResume(resume)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-green-500 hover:text-green-700 hover:bg-green-100"
+                        onClick={() => handleDownloadResume(resume)}
+                      >
+                        <Download className="h-4 w-4" />
+                      </Button>
+                      
                       <Button 
                         variant="ghost" 
                         size="icon" 
@@ -265,6 +314,54 @@ export function ResumeUploader() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      {/* Resume View Dialog */}
+      <Dialog open={viewingResume !== null} onOpenChange={() => setViewingResume(null)}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>{viewingResume?.fileName}</DialogTitle>
+            <DialogDescription>
+              Uploaded on {viewingResume && format(new Date(viewingResume.uploadDate), 'MMMM d, yyyy')}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="border rounded-md p-4 min-h-[400px] max-h-[60vh] overflow-auto bg-white">
+            <div className="flex justify-center items-center h-full">
+              {/* In a real application, this would display the actual resume content */}
+              {/* For now, we'll show a mock display */}
+              <div className="text-center">
+                <FileText className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
+                <p className="mb-2 text-lg font-medium">
+                  {viewingResume?.fileName}
+                </p>
+                <p className="text-muted-foreground">
+                  This is a mock display of the resume content. In a real application, the actual resume would be displayed or embedded here.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setViewingResume(null)}
+            >
+              Close
+            </Button>
+            {viewingResume && (
+              <Button 
+                onClick={() => {
+                  handleDownloadResume(viewingResume);
+                }}
+                className="flex items-center gap-1"
+              >
+                <Download className="h-4 w-4" />
+                Download
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
