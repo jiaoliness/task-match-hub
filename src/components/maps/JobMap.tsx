@@ -1,13 +1,20 @@
-
-import { useEffect, useRef, useState } from "react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
+import { useEffect, useRef, useState, useCallback } from "react";
+import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from "@react-google-maps/api";
 import { Job } from "@/types";
 import { format } from "date-fns";
 
-// You'll need to replace this with your Mapbox public token
 // For a real application, use environment variables
-const MAPBOX_TOKEN = "pk.eyJ1IjoibG92YWJsZS1haSIsImEiOiJjbHh4aDI1amYwNGo0MmtvNzZuajQwbm9zIn0.u3HO34iH4h9XlJbbomlHSw";
+const GOOGLE_MAPS_API_KEY = "AIzaSyDtLTRUsAsi0T94ts1t5Fx3JiVri2KWx9A";
+
+const containerStyle = {
+  width: '100%',
+  height: '100%'
+};
+
+const defaultCenter = {
+  lat: 10.7202, // Iloilo City center
+  lng: 122.5642
+};
 
 interface JobMapProps {
   jobs: Job[];
@@ -15,10 +22,14 @@ interface JobMapProps {
 }
 
 export function JobMap({ jobs, searchTerm }: JobMapProps) {
-  const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const markerRefs = useRef<{ [key: string]: mapboxgl.Marker }>({});
+  const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+  const markersRef = useRef<{ [key: string]: google.maps.Marker }>({});
+
+  const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: GOOGLE_MAPS_API_KEY
+  });
 
   // Filter jobs based on search term
   const filteredJobs = jobs.filter(job => 
@@ -29,36 +40,6 @@ export function JobMap({ jobs, searchTerm }: JobMapProps) {
     job.address?.street?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     job.address?.state?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Initialize map
-  useEffect(() => {
-    if (mapContainer.current && !map.current) {
-      mapboxgl.accessToken = MAPBOX_TOKEN;
-      
-      // Initialize the map centered on Iloilo City
-      const newMap = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: "mapbox://styles/mapbox/streets-v12",
-        center: [122.5642, 10.7202], // Center on Iloilo City
-        zoom: 14 // Higher zoom level to show a partial area of the city
-      });
-      
-      newMap.on('load', () => {
-        setMapLoaded(true);
-      });
-      
-      map.current = newMap;
-      
-      // Add navigation controls
-      newMap.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      
-      // Clean up on unmount
-      return () => {
-        newMap.remove();
-        map.current = null;
-      };
-    }
-  }, []);
 
   // Get job location info for display
   const getLocationInfo = (job: Job) => {
@@ -82,119 +63,106 @@ export function JobMap({ jobs, searchTerm }: JobMapProps) {
     return "Flexible";
   };
 
-  // Add or update markers when jobs or search term changes
-  useEffect(() => {
-    if (!map.current || !mapLoaded) return;
+  const onLoad = useCallback((map: google.maps.Map) => {
+    setMap(map);
+  }, []);
 
-    // Clear all existing markers
-    Object.values(markerRefs.current).forEach(marker => marker.remove());
-    markerRefs.current = {};
-    
-    // Add markers for filtered jobs
+  const onUnmount = useCallback(() => {
+    setMap(null);
+  }, []);
+
+  // Update markers when jobs or search term changes
+  useEffect(() => {
+    if (!map) return;
+
+    // Clear existing markers
+    Object.values(markersRef.current).forEach(marker => marker.setMap(null));
+    markersRef.current = {};
+
+    // Add new markers
+    const bounds = new google.maps.LatLngBounds();
+
     filteredJobs.forEach(job => {
-      // Skip jobs without proper location data
       if (!job.address) return;
-      
-      // Use the coordinates from the job address
+
       const coordinates = getCoordinatesForAddress(job.address);
-      
       if (!coordinates) return;
 
-      // Create popup content
-      const popupContent = document.createElement('div');
-      popupContent.className = 'p-2 max-w-xs';
-      
-      // Popup header (visible without clicking)
-      const headerContent = document.createElement('div');
-      headerContent.className = 'font-semibold text-primary cursor-pointer hover:underline';
-      headerContent.textContent = job.title;
-      headerContent.onclick = () => window.location.href = `/job/${job.id}`;
-      
-      const budgetContent = document.createElement('div');
-      budgetContent.className = 'text-sm text-muted-foreground';
-      budgetContent.textContent = `₱${job.budget}`;
-      
-      // Details content (expanded view)
-      const detailsContent = document.createElement('div');
-      detailsContent.className = 'mt-2 hidden';
-      detailsContent.id = `details-${job.id}`;
-      
-      const description = document.createElement('p');
-      description.className = 'text-sm mt-1 line-clamp-3';
-      description.textContent = job.description;
-      
-      const location = document.createElement('div');
-      location.className = 'text-xs text-muted-foreground mt-1';
-      location.textContent = `📍 ${getLocationInfo(job)}`;
-      
-      const schedule = document.createElement('div');
-      schedule.className = 'text-xs text-muted-foreground mt-1';
-      schedule.textContent = `🕒 ${getDateInfo(job)}`;
-      
-      const skills = document.createElement('div');
-      skills.className = 'text-xs mt-2 flex flex-wrap gap-1';
-      job.skills.slice(0, 3).forEach(skill => {
-        const skillTag = document.createElement('span');
-        skillTag.className = 'bg-primary/10 text-primary px-1 rounded text-xs';
-        skillTag.textContent = skill;
-        skills.appendChild(skillTag);
+      const position = { lat: coordinates[1], lng: coordinates[0] };
+      bounds.extend(position);
+
+      const marker = new google.maps.Marker({
+        position,
+        map,
+        title: job.title,
+        animation: google.maps.Animation.DROP
       });
-      
-      const viewButton = document.createElement('a');
-      viewButton.href = `/job/${job.id}`;
-      viewButton.className = 'mt-2 bg-primary text-white text-xs px-3 py-1 rounded block text-center';
-      viewButton.textContent = 'View Details';
-      
-      detailsContent.appendChild(description);
-      detailsContent.appendChild(location);
-      detailsContent.appendChild(schedule);
-      detailsContent.appendChild(skills);
-      detailsContent.appendChild(viewButton);
-      
-      // Toggle details on header click
-      headerContent.addEventListener('click', (e) => {
-        e.preventDefault();
-        const details = document.getElementById(`details-${job.id}`);
-        if (details) {
-          details.classList.toggle('hidden');
-        }
+
+      marker.addListener('click', () => {
+        setSelectedJob(job);
       });
-      
-      // Assemble popup
-      popupContent.appendChild(headerContent);
-      popupContent.appendChild(budgetContent);
-      popupContent.appendChild(detailsContent);
-      
-      // Create popup and marker
-      const popup = new mapboxgl.Popup({ offset: 25 })
-        .setDOMContent(popupContent);
-      
-      const marker = new mapboxgl.Marker({ color: "#4338ca" })
-        .setLngLat(coordinates)
-        .setPopup(popup)
-        .addTo(map.current!);
-      
-      markerRefs.current[job.id] = marker;
+
+      markersRef.current[job.id] = marker;
     });
-    
+
     // Fit map to markers if there are any
-    if (Object.keys(markerRefs.current).length > 0) {
-      const bounds = new mapboxgl.LngLatBounds();
-      
-      Object.values(markerRefs.current).forEach(marker => {
-        bounds.extend(marker.getLngLat());
-      });
-      
-      map.current.fitBounds(bounds, {
-        padding: 50,
-        maxZoom: 15
-      });
+    if (Object.keys(markersRef.current).length > 0) {
+      map.fitBounds(bounds);
     }
-  }, [filteredJobs, mapLoaded, searchTerm]);
-  
+  }, [map, filteredJobs, searchTerm]);
+
+  if (!isLoaded) {
+    return <div className="h-full w-full flex items-center justify-center">Loading map...</div>;
+  }
+
   return (
     <div className="h-[calc(100vh-200px)] w-full rounded-lg overflow-hidden border">
-      <div ref={mapContainer} className="h-full w-full" />
+      <GoogleMap
+        mapContainerStyle={containerStyle}
+        center={defaultCenter}
+        zoom={14}
+        onLoad={onLoad}
+        onUnmount={onUnmount}
+        options={{
+          zoomControl: true,
+          streetViewControl: false,
+          mapTypeControl: false,
+          fullscreenControl: true,
+        }}
+      >
+        {selectedJob && (
+          <InfoWindow
+            position={{
+              lat: getCoordinatesForAddress(selectedJob.address)![1],
+              lng: getCoordinatesForAddress(selectedJob.address)![0]
+            }}
+            onCloseClick={() => setSelectedJob(null)}
+          >
+            <div className="p-2 max-w-xs">
+              <h3 className="font-semibold text-primary cursor-pointer hover:underline" onClick={() => window.location.href = `/job/${selectedJob.id}`}>
+                {selectedJob.title}
+              </h3>
+              <p className="text-sm text-muted-foreground">₱{selectedJob.budget}</p>
+              <p className="text-sm mt-1 line-clamp-3">{selectedJob.description}</p>
+              <p className="text-xs text-muted-foreground mt-1">📍 {getLocationInfo(selectedJob)}</p>
+              <p className="text-xs text-muted-foreground mt-1">🕒 {getDateInfo(selectedJob)}</p>
+              <div className="text-xs mt-2 flex flex-wrap gap-1">
+                {selectedJob.skills.slice(0, 3).map((skill, index) => (
+                  <span key={index} className="bg-primary/10 text-primary px-1 rounded text-xs">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+              <a
+                href={`/job/${selectedJob.id}`}
+                className="mt-2 bg-primary text-white text-xs px-3 py-1 rounded block text-center"
+              >
+                View Details
+              </a>
+            </div>
+          </InfoWindow>
+        )}
+      </GoogleMap>
     </div>
   );
 }
