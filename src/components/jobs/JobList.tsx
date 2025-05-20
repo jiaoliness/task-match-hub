@@ -100,7 +100,7 @@ function JobCard({ job, showApplyButton }: JobCardProps) {
           ))}
         </div>
         <div className="flex justify-between text-sm text-muted-foreground">
-          <div>Budget: <span className="font-medium">${job.budget}</span></div>
+          <div>Budget: <span className="font-medium">₱{job.budget}</span></div>
           <div>Schedule: <span className="font-medium">{getDateInfo()}</span></div>
         </div>
       </CardContent>

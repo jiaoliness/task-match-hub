@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useState, ReactNode } from "react";
 import { Job, JobApplication, Service, Review, Booking, TimeSlot, Resume } from "@/types";
 
@@ -27,55 +28,55 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-// Updated mock data with more jobs and address information
+// Updated mock data with Iloilo City addresses and more jobs
 const MOCK_JOBS: Job[] = [
   {
     id: "1",
-    title: "Fix faulty outlets in kitchen",
+    title: "Fix electrical outlets in kitchen",
     description: "I have two outlets in my kitchen that have stopped working. Need someone to diagnose and fix the issue.",
-    budget: 150,
+    budget: 1500,
     schedulingType: "specific",
     specificDate: "2024-06-15",
     specificTimeSlot: "10:00 AM - 12:00 PM",
     customerId: "1",
-    customerName: "John Doe",
+    customerName: "John Cruz",
     status: "open",
     skills: ["Electrical Repair", "Troubleshooting"],
     createdAt: "2024-05-01T10:00:00Z",
     address: {
-      street: "123 Main St",
-      city: "Austin",
-      state: "Texas",
-      zipCode: "78701",
-      country: "USA"
+      street: "SM City Iloilo, Mandurriao",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "2",
     title: "Install ceiling fan in bedroom",
     description: "Need a ceiling fan installed in the master bedroom. I have the fan, just need someone to install it.",
-    budget: 120,
+    budget: 1200,
     schedulingType: "flexible",
     weeklyPreference: ["Saturday", "Sunday"],
     timeFramePreference: "Morning or Afternoon",
     customerId: "1",
-    customerName: "John Doe",
+    customerName: "John Cruz",
     status: "open",
     skills: ["Fan Installation", "Electrical Wiring"],
     createdAt: "2024-05-05T14:30:00Z",
     address: {
-      street: "123 Main St",
-      city: "Austin",
-      state: "Texas",
-      zipCode: "78701",
-      country: "USA"
+      street: "Plazuela de Iloilo, Mandurriao",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "3",
     title: "Website redesign for local restaurant",
     description: "Our restaurant needs a modern, mobile-friendly website. Looking for someone to redesign our existing site with online ordering capabilities.",
-    budget: 1200,
+    budget: 12000,
     schedulingType: "flexible",
     weeklyPreference: ["Monday", "Wednesday", "Friday"],
     timeFramePreference: "Anytime",
@@ -85,16 +86,18 @@ const MOCK_JOBS: Job[] = [
     skills: ["Web Design", "UI/UX", "React", "WordPress"],
     createdAt: "2024-05-10T09:15:00Z",
     address: {
-      city: "Chicago",
-      state: "Illinois",
-      country: "USA"
+      street: "Iloilo Business Park, Mandurriao",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "4",
     title: "Plumbing repair in bathroom",
     description: "Leaking faucet and slow draining sink in master bathroom. Need a qualified plumber to fix both issues.",
-    budget: 175,
+    budget: 1750,
     schedulingType: "specific",
     specificDate: "2024-06-10",
     specificTimeSlot: "2:00 PM - 4:00 PM",
@@ -104,18 +107,18 @@ const MOCK_JOBS: Job[] = [
     skills: ["Plumbing", "Sink Repair", "Faucet Installation"],
     createdAt: "2024-05-12T13:20:00Z",
     address: {
-      street: "456 Oak Avenue",
-      city: "Denver",
-      state: "Colorado",
-      zipCode: "80202",
-      country: "USA"
+      street: "Atria Park District, Mandurriao",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "5",
     title: "Logo design for tech startup",
     description: "New AI startup looking for a modern, clean logo design that represents innovation and cutting-edge technology.",
-    budget: 350,
+    budget: 3500,
     schedulingType: "flexible",
     weeklyPreference: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     timeFramePreference: "Within 2 weeks",
@@ -125,16 +128,18 @@ const MOCK_JOBS: Job[] = [
     skills: ["Graphic Design", "Logo Design", "Branding"],
     createdAt: "2024-05-15T10:45:00Z",
     address: {
-      city: "San Francisco",
-      state: "California",
-      country: "USA"
+      street: "Iloilo City Hall, Plaza Libertad",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "6",
-    title: "House painting - Living room and kitchen",
-    description: "Need interior painting for living room (walls and ceiling) and kitchen. Approximately 500 sq ft total. Paint will be provided.",
-    budget: 600,
+    title: "Living room and kitchen painting",
+    description: "Need interior painting for living room (walls and ceiling) and kitchen. Approximately 50 sq m total. Paint will be provided.",
+    budget: 6000,
     schedulingType: "specific",
     specificDate: "2024-06-22",
     specificTimeSlot: "8:00 AM - 10:00 AM",
@@ -144,18 +149,18 @@ const MOCK_JOBS: Job[] = [
     skills: ["Painting", "Interior Design", "Home Improvement"],
     createdAt: "2024-05-16T15:30:00Z",
     address: {
-      street: "789 Maple Drive",
-      city: "Portland",
-      state: "Oregon",
-      zipCode: "97201",
-      country: "USA"
+      street: "Smallville Complex, Mandurriao",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "7",
     title: "Social media content creation",
     description: "Looking for someone to create engaging social media content for our fitness brand. Need posts for Instagram, Facebook, and TikTok.",
-    budget: 400,
+    budget: 4000,
     schedulingType: "flexible",
     weeklyPreference: ["Monday", "Wednesday", "Friday"],
     timeFramePreference: "Ongoing",
@@ -165,16 +170,18 @@ const MOCK_JOBS: Job[] = [
     skills: ["Social Media Marketing", "Content Creation", "Photography", "Video Editing"],
     createdAt: "2024-05-18T11:10:00Z",
     address: {
-      city: "Miami",
-      state: "Florida",
-      country: "USA"
+      street: "Festive Walk Mall, Mandurriao",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "8",
-    title: "HVAC maintenance and filter replacement",
-    description: "Need routine maintenance for central air system and replacement of all air filters in the house.",
-    budget: 200,
+    title: "AC maintenance and filter replacement",
+    description: "Need routine maintenance for air conditioning system and replacement of all air filters in the house.",
+    budget: 2000,
     schedulingType: "specific",
     specificDate: "2024-06-18",
     specificTimeSlot: "12:00 PM - 2:00 PM",
@@ -184,18 +191,18 @@ const MOCK_JOBS: Job[] = [
     skills: ["HVAC", "Air Conditioning", "Maintenance"],
     createdAt: "2024-05-19T14:25:00Z",
     address: {
-      street: "234 Pine Street",
-      city: "Phoenix",
-      state: "Arizona",
-      zipCode: "85001",
-      country: "USA"
+      street: "Esplanade, Molo",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "9",
-    title: "Mobile app development for fitness tracking",
+    title: "Fitness tracking app development",
     description: "Looking for a developer to create a mobile app for tracking workouts, nutrition, and progress. Need both iOS and Android versions.",
-    budget: 5000,
+    budget: 50000,
     schedulingType: "flexible",
     weeklyPreference: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
     timeFramePreference: "Within 3 months",
@@ -205,16 +212,18 @@ const MOCK_JOBS: Job[] = [
     skills: ["Mobile Development", "React Native", "UI/UX", "Fitness"],
     createdAt: "2024-05-20T09:00:00Z",
     address: {
-      city: "Seattle",
-      state: "Washington",
-      country: "USA"
+      street: "GT Town Center, Pavia",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   },
   {
     id: "10",
     title: "Garden landscaping and maintenance",
     description: "Need help redesigning front yard garden with drought-resistant plants and setting up a drip irrigation system.",
-    budget: 800,
+    budget: 8000,
     schedulingType: "specific",
     specificDate: "2024-06-25",
     specificTimeSlot: "8:00 AM - 10:00 AM",
@@ -224,11 +233,221 @@ const MOCK_JOBS: Job[] = [
     skills: ["Landscaping", "Gardening", "Irrigation Systems"],
     createdAt: "2024-05-22T16:45:00Z",
     address: {
-      street: "567 Willow Lane",
-      city: "Las Vegas",
-      state: "Nevada",
-      zipCode: "89101",
-      country: "USA"
+      street: "Robinson's Place Iloilo, Molo",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "11",
+    title: "WordPress website maintenance",
+    description: "Looking for ongoing maintenance of our WordPress website including updates, security, and content changes twice a month.",
+    budget: 2500,
+    schedulingType: "flexible",
+    weeklyPreference: ["Tuesday", "Thursday"],
+    timeFramePreference: "Biweekly",
+    customerId: "11",
+    customerName: "Marco Santos",
+    status: "open",
+    skills: ["WordPress", "Web Development", "PHP", "Content Management"],
+    createdAt: "2024-05-23T08:30:00Z",
+    address: {
+      street: "University of San Agustin, General Luna St.",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "12",
+    title: "Event photography for wedding",
+    description: "Need a professional photographer for a wedding ceremony and reception. Around 6 hours of coverage needed.",
+    budget: 15000,
+    schedulingType: "specific",
+    specificDate: "2024-07-15",
+    specificTimeSlot: "12:00 PM - 6:00 PM",
+    customerId: "12",
+    customerName: "Elena Rivera",
+    status: "open",
+    skills: ["Photography", "Wedding", "Photo Editing", "Event Coverage"],
+    createdAt: "2024-05-24T14:15:00Z",
+    address: {
+      street: "West Visayas State University, La Paz",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "13",
+    title: "Math tutoring for high school student",
+    description: "Looking for a math tutor for my 10th grade son who needs help with calculus. 2 hours per week.",
+    budget: 1800,
+    schedulingType: "flexible",
+    weeklyPreference: ["Monday", "Wednesday", "Friday"],
+    timeFramePreference: "After school hours",
+    customerId: "13",
+    customerName: "Fernando Gomez",
+    status: "open",
+    skills: ["Mathematics", "Tutoring", "Calculus", "Education"],
+    createdAt: "2024-05-25T09:20:00Z",
+    address: {
+      street: "Iloilo Provincial Capitol, Bonifacio Drive",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "14",
+    title: "Moving help - small apartment",
+    description: "Need assistance moving from a 1-bedroom apartment to a new place. Have approximately 15 boxes and few furniture items.",
+    budget: 3000,
+    schedulingType: "specific",
+    specificDate: "2024-06-30",
+    specificTimeSlot: "8:00 AM - 12:00 PM",
+    customerId: "14",
+    customerName: "Carlos Martinez",
+    status: "open",
+    skills: ["Moving", "Lifting", "Transportation"],
+    createdAt: "2024-05-26T10:45:00Z",
+    address: {
+      street: "Iloilo Doctors' Hospital, Q. Abeto St.",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "15",
+    title: "Catering for corporate event",
+    description: "Need catering service for a corporate event with 50 attendees. Mix of local and international cuisines required.",
+    budget: 25000,
+    schedulingType: "specific",
+    specificDate: "2024-07-05",
+    specificTimeSlot: "10:00 AM - 2:00 PM",
+    customerId: "15",
+    customerName: "Isabella Wong",
+    status: "open",
+    skills: ["Catering", "Food Service", "Event Planning", "Cooking"],
+    createdAt: "2024-05-27T13:30:00Z",
+    address: {
+      street: "St. Paul's Hospital, General Luna St.",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "16",
+    title: "Video editing for YouTube channel",
+    description: "Need a video editor for my cooking channel. Weekly 15-20 minute videos with effects, transitions, and background music.",
+    budget: 3500,
+    schedulingType: "flexible",
+    weeklyPreference: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    timeFramePreference: "Weekly",
+    customerId: "16",
+    customerName: "Sophia Lee",
+    status: "open",
+    skills: ["Video Editing", "Adobe Premiere", "After Effects", "Content Creation"],
+    createdAt: "2024-05-28T11:15:00Z",
+    address: {
+      street: "Molo Church, Molo",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "17",
+    title: "House cleaning service",
+    description: "Need thorough cleaning of 3-bedroom house including floors, bathrooms, kitchen, and windows.",
+    budget: 2000,
+    schedulingType: "specific",
+    specificDate: "2024-06-12",
+    specificTimeSlot: "8:00 AM - 4:00 PM",
+    customerId: "17",
+    customerName: "Ana Reyes",
+    status: "open",
+    skills: ["Cleaning", "Housekeeping", "Organizing"],
+    createdAt: "2024-05-29T09:40:00Z",
+    address: {
+      street: "Jaro Cathedral, Jaro",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "18",
+    title: "Car detailing service",
+    description: "Need interior and exterior detailing for sedan including waxing, polishing, and upholstery cleaning.",
+    budget: 2500,
+    schedulingType: "specific",
+    specificDate: "2024-06-20",
+    specificTimeSlot: "10:00 AM - 2:00 PM",
+    customerId: "18",
+    customerName: "Daniel Kim",
+    status: "open",
+    skills: ["Car Detailing", "Auto Care", "Cleaning"],
+    createdAt: "2024-05-30T14:20:00Z",
+    address: {
+      street: "Central Philippine University, Jaro",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "19",
+    title: "Personal shopper needed",
+    description: "Looking for someone to help with grocery shopping and errands once a week for an elderly couple.",
+    budget: 1500,
+    schedulingType: "flexible",
+    weeklyPreference: ["Tuesday", "Thursday", "Saturday"],
+    timeFramePreference: "Morning",
+    customerId: "19",
+    customerName: "Mia Fernandez",
+    status: "open",
+    skills: ["Shopping", "Assistance", "Errand Running"],
+    createdAt: "2024-05-31T10:25:00Z",
+    address: {
+      street: "La Paz Public Market, La Paz",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
+    }
+  },
+  {
+    id: "20",
+    title: "Accounting services for small business",
+    description: "Need an accountant for monthly bookkeeping and quarterly tax preparation for a small retail business.",
+    budget: 5000,
+    schedulingType: "flexible",
+    weeklyPreference: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    timeFramePreference: "End of month",
+    customerId: "20",
+    customerName: "Luis Torres",
+    status: "open",
+    skills: ["Accounting", "Bookkeeping", "Tax Preparation", "QuickBooks"],
+    createdAt: "2024-06-01T08:55:00Z",
+    address: {
+      street: "Calle Real, City Proper",
+      city: "Iloilo City",
+      state: "Iloilo",
+      zipCode: "5000",
+      country: "Philippines"
     }
   }
 ];

@@ -39,8 +39,8 @@ const FindJobs = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold">Find Jobs</h1>
-          <p className="text-muted-foreground">Browse available jobs that match your skills.</p>
+          <h1 className="text-2xl font-bold">Find Jobs in Iloilo City</h1>
+          <p className="text-muted-foreground">Browse available jobs that match your skills in Iloilo City, Philippines.</p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
