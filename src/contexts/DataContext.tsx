@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
-import { Job, JobApplication, Service, Review, Booking, TimeSlot } from "@/types";
+import { Job, JobApplication, Service, Review, Booking, TimeSlot, Resume } from "@/types";
 
 interface DataContextType {
   jobs: Job[];
@@ -19,6 +19,10 @@ interface DataContextType {
   getBookingsForFreelancer: (freelancerId: string) => Booking[];
   checkFreelancerAvailability: (freelancerId: string, date: string, timeSlot: string) => boolean;
   addBooking: (booking: Omit<Booking, "id">) => Promise<Booking>;
+  addResumeToUser: (userId: string, resume: Omit<Resume, "id" | "isActive" | "uploadDate">) => Promise<Resume>;
+  getUserResumes: (userId: string) => Resume[];
+  setActiveResume: (userId: string, resumeId: string) => Promise<void>;
+  deleteResume: (userId: string, resumeId: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -426,6 +430,28 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [services, setServices] = useState<Service[]>(MOCK_SERVICES);
   const [reviews, setReviews] = useState<Review[]>(MOCK_REVIEWS);
   const [bookings, setBookings] = useState<Booking[]>(MOCK_BOOKINGS);
+  
+  // Add a new state for tracking users with their resumes
+  const [userResumes, setUserResumes] = useState<Record<string, Resume[]>>({
+    "2": [ // Add some sample resumes for freelancer with ID "2"
+      {
+        id: "1",
+        fileName: "jane_smith_resume.pdf",
+        fileSize: 2.4 * 1024 * 1024, // 2.4 MB
+        fileType: "application/pdf",
+        uploadDate: "2024-04-15T10:30:00Z",
+        isActive: true
+      },
+      {
+        id: "2",
+        fileName: "jane_smith_portfolio.pdf",
+        fileSize: 3.8 * 1024 * 1024, // 3.8 MB
+        fileType: "application/pdf",
+        uploadDate: "2024-03-22T14:45:00Z",
+        isActive: false
+      }
+    ]
+  });
 
   const addJob = async (jobData: Omit<Job, "id" | "createdAt" | "status">) => {
     // Simulate API call
@@ -542,6 +568,89 @@ export function DataProvider({ children }: { children: ReactNode }) {
     return reviews.filter(review => review.freelancerId === freelancerId);
   };
 
+  // Resume management functions
+  const getUserResumes = (userId: string) => {
+    return userResumes[userId] || [];
+  };
+
+  const addResumeToUser = async (userId: string, resumeData: Omit<Resume, "id" | "isActive" | "uploadDate">) => {
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    const userResumesList = userResumes[userId] || [];
+    
+    // Check if we already have 5 resumes
+    if (userResumesList.length >= 5) {
+      throw new Error("Maximum of 5 resumes allowed. Please delete one before uploading more.");
+    }
+    
+    const newResume: Resume = {
+      ...resumeData,
+      id: `${Date.now()}`,
+      uploadDate: new Date().toISOString(),
+      isActive: userResumesList.length === 0 // Set as active if it's the first resume
+    };
+    
+    const updatedResumes = [...userResumesList, newResume];
+    
+    setUserResumes(prev => ({
+      ...prev,
+      [userId]: updatedResumes
+    }));
+    
+    return newResume;
+  };
+
+  const setActiveResume = async (userId: string, resumeId: string) => {
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    const userResumesList = userResumes[userId] || [];
+    
+    if (userResumesList.length === 0) {
+      throw new Error("No resumes found for this user.");
+    }
+    
+    const updatedResumes = userResumesList.map(resume => ({
+      ...resume,
+      isActive: resume.id === resumeId
+    }));
+    
+    setUserResumes(prev => ({
+      ...prev,
+      [userId]: updatedResumes
+    }));
+  };
+  
+  const deleteResume = async (userId: string, resumeId: string) => {
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    const userResumesList = userResumes[userId] || [];
+    
+    if (userResumesList.length === 0) {
+      throw new Error("No resumes found for this user.");
+    }
+    
+    // Find if we're deleting an active resume
+    const deletingActive = userResumesList.find(r => r.id === resumeId)?.isActive || false;
+    
+    let updatedResumes = userResumesList.filter(resume => resume.id !== resumeId);
+    
+    // If we deleted the active resume and there are other resumes left, make the first one active
+    if (deletingActive && updatedResumes.length > 0) {
+      updatedResumes = updatedResumes.map((resume, index) => ({
+        ...resume,
+        isActive: index === 0
+      }));
+    }
+    
+    setUserResumes(prev => ({
+      ...prev,
+      [userId]: updatedResumes
+    }));
+  };
+  
   return (
     <DataContext.Provider value={{ 
       jobs, 
@@ -560,7 +669,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
       getReviewsForFreelancer,
       getBookingsForFreelancer,
       checkFreelancerAvailability,
-      addBooking
+      addBooking,
+      // Add new resume functions to the context
+      addResumeToUser,
+      getUserResumes,
+      setActiveResume,
+      deleteResume
     }}>
       {children}
     </DataContext.Provider>

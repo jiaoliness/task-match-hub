@@ -1,5 +1,15 @@
 
+
 export type UserRole = "customer" | "freelancer";
+
+export interface Resume {
+  id: string;
+  fileName: string;
+  fileSize: number;
+  fileType: string;
+  uploadDate: string;
+  isActive: boolean;
+}
 
 export interface User {
   id: string;
@@ -16,6 +26,7 @@ export interface User {
     zipCode?: string;
     country?: string;
   };
+  resumes?: Resume[];
 }
 
 export interface Job {
