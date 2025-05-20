@@ -1,11 +1,8 @@
 
-import { useState } from "react";
-import { useData } from "@/contexts/DataContext";
 import { Job } from "@/types";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
 import { MapPin } from "lucide-react";
@@ -13,11 +10,10 @@ import { MapPin } from "lucide-react";
 interface JobListProps {
   jobs: Job[];
   showApplyButton?: boolean;
+  searchTerm?: string;
 }
 
-export function JobList({ jobs, showApplyButton = false }: JobListProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  
+export function JobList({ jobs, showApplyButton = false, searchTerm = "" }: JobListProps) {
   const filteredJobs = jobs.filter(job => 
     job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -28,15 +24,6 @@ export function JobList({ jobs, showApplyButton = false }: JobListProps) {
   
   return (
     <div className="space-y-6">
-      <div className="flex gap-2">
-        <Input
-          placeholder="Search jobs by title, description, skills, or location..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-md"
-        />
-      </div>
-      
       {filteredJobs.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredJobs.map((job) => (
